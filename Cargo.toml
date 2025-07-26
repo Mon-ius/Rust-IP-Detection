@@ -19,10 +19,10 @@ actix-web-static-files = "4.0"
 rand_core = "0.9.3"
 base64 = "0.22"
 
-[target.'cfg(all(target_env = "musl", target_pointer_width = "64", not(any(target_arch = "powerpc64"))))'.dependencies.jemallocator]
+[target.'cfg(all(target_env = "musl", target_pointer_width = "64", not(any(target_arch = "powerpc64", target_arch = "powerpc"))))'.dependencies.jemallocator]
 version = "0.5"
 
-[target.'cfg(any(not(all(target_env = "musl")), any(target_arch = "powerpc64")))'.dependencies.mimalloc]
+[target.'cfg(any(not(all(target_env = "musl")), any(target_arch = "powerpc64", target_arch = "powerpc")))'.dependencies.mimalloc]
 version = "0.1"
 features = ["secure"]
 
