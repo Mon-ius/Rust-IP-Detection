@@ -10,7 +10,7 @@ services:
       CLOUDFLARE: ${CLOUDFLARE}
       SERVICE_PORT: ${SERVICE_PORT}
     networks:
-      - ${REPO}_network
+      - ${REPO}-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${SERVICE_PORT}/v1/ed25519.pub"]
       interval: 30s
@@ -41,7 +41,7 @@ services:
       ${REPO}:
         condition: service_healthy
     networks:
-      - ${REPO}_network
+      - ${REPO}-network
     healthcheck:
       test: ["CMD", "nginx", "-t"]
       interval: 30s
@@ -50,9 +50,9 @@ services:
       start_period: 40s
 
 networks:
-  ${REPO}_network:
+  ${REPO}-network:
     driver: bridge
-    name: ${REPO}_network
+    name: ${REPO}-network
     enable_ipv6: true
     ipam:
       driver: default
