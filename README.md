@@ -1,6 +1,6 @@
 # Rust-IP-Detection
 
-[![CI Status](https://github.com/Mon-ius/Rust-IP-Detection/workflows/deploy/badge.svg)](https://github.com/Mon-ius/Rust-IP-Detection/actions?query=workflow:deploy)
+[![CI Status](https://github.com/Mon-ius/Rust-IP-Detection/workflows/ci/badge.svg)](https://github.com/Mon-ius/Rust-IP-Detection/actions?query=workflow:ci)
 [![GitHub release (with filter)](https://img.shields.io/github/v/release/Mon-ius/Rust-IP-Detection)](https://github.com/Mon-ius/Rust-IP-Detection/releases)
 [![Issues](https://img.shields.io/github/issues/Mon-ius/Rust-IP-Detection)](https://github.com/Mon-ius/Rust-IP-Detection/issues) 
 [![Forks](https://img.shields.io/github/forks/Mon-ius/Rust-IP-Detection)](https://github.com/Mon-ius/Rust-IP-Detection/network/members)
