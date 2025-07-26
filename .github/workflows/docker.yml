@@ -16,9 +16,6 @@ on:
     workflows: ["ci"]
     types:
       - completed
-  push:
-    branches:
-      - "master"
 
 jobs:
   build-docker:
