@@ -1,19 +1,5 @@
 use clap::Parser;
 
-#[cfg(all(target_env = "musl", target_pointer_width = "64"))]
-use jemallocator::Jemalloc;
-
-#[cfg(not(all(target_env = "musl")))]
-use mimalloc::MiMalloc;
-
-#[cfg(all(target_env = "musl", target_pointer_width = "64"))]
-#[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
-
-#[cfg(not(all(target_env = "musl")))]
-#[global_allocator]
-static GLOBAL: MiMalloc = MiMalloc;
-
 #[derive(Parser)]
 #[command(about = "The Rust-IP-Detection Project service cli")]
 struct Cli {
