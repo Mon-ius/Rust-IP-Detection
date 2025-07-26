@@ -1,0 +1,32 @@
+name: deploy
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+      name:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Produce docker-compose.yml for deploy
+        run: |
+          ghcr="ghcr.io/${{ github.repository }}"
+          echo "ghcr=${ghcr,,}" >> $GITHUB_ENV
+          repo=$(echo "${ghcr}" | cut -d'/' -f3)
+          sed -e "s|\${GHCR}|${ghcr}|g" \
+              -e "s|\${REPO}|${repo}|g" \
+              "${{ inputs.path }}" > docker-compose.yml
+
+      - name: Upload docker-compose.yml for deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-compose
+          path: docker-compose.yml
+          retention-days: 30

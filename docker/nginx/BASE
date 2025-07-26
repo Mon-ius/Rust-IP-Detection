@@ -1,0 +1,58 @@
+FROM alpine:3.22 AS nginx-alpine
+
+ENV XUSER="nginx"
+ENV NG_VER="1.27.4"
+ENV NG_SRC="https://nginx.org/download/nginx-${NG_VER}.tar.gz"
+ENV PKG="build-base linux-headers openssl-dev pcre-dev curl zlib-dev"
+
+RUN \
+    apk --no-cache add ${PKG} && \
+    curl -fsSL "${NG_SRC}" | tar -C /tmp -xz && \
+    cd /tmp/nginx-"${NG_VER}" && \
+    ./configure \
+        --prefix=/etc/nginx \
+        --sbin-path=/usr/sbin/nginx \
+        --conf-path=/etc/nginx/nginx.conf \
+        --error-log-path=/var/log/nginx/error.log \
+        --http-log-path=/var/log/nginx/access.log \
+        --pid-path=/var/run/nginx.pid \
+        --lock-path=/var/run/nginx.lock \
+        --http-client-body-temp-path=/var/cache/nginx/client_temp \
+        --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+        --user=$XUSER \
+        --group=$XUSER \
+        --with-http_ssl_module \
+        --with-http_realip_module \
+        --with-http_addition_module \
+        --with-http_sub_module \
+        --with-http_dav_module \
+        --with-http_flv_module \
+        --with-http_mp4_module \
+        --with-http_gunzip_module \
+        --with-http_gzip_static_module \
+        --with-http_random_index_module \
+        --with-http_secure_link_module \
+        --with-http_stub_status_module \
+        --with-http_auth_request_module \
+        --with-file-aio \
+        --with-threads \
+        --with-stream \
+        --with-stream_ssl_module \
+        --with-stream_realip_module \
+        --with-http_slice_module \
+        --with-http_v2_module && \
+    make -j"$(nproc)" && make install
+
+FROM alpine:3.22
+ENV XUSER=nginx
+
+RUN apk update && apk upgrade \
+    && apk add --no-cache ca-certificates openssl pcre zlib tzdata git socat curl\
+    && rm -rf /var/cache/apk/*
+
+COPY --from=nginx-alpine /usr/sbin/nginx /usr/sbin/nginx
+
+RUN curl -fsSL https://get.acme.sh | sh -s email=m3@0niz.us
+
+RUN addgroup -S ${XUSER} && \
+    adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G ${XUSER} ${XUSER}

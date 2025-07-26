@@ -1,0 +1,56 @@
+name: release
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        default: '0'
+        required: true
+        type: string
+      note:
+        default: 'None'
+        required: true
+        type: string
+    outputs:
+      tag:
+        description: "Pushed tag version"
+        value: ${{ jobs.release.outputs.tag }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check-release
+        name: Check if release exists
+        run: |
+          if gh release view $VERSION &>/dev/null; then
+            echo "release_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "release_exists=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+      
+      - id: release
+        name: Create or update release
+        run: |
+          if [ "$RELEASE_EXISTS" == "true" ]; then
+            echo "Release with tag $VERSION already exists, overwriting it..."
+            gh release edit $VERSION --notes "$NOTE"
+          else
+            echo "Creating new release with tag $VERSION..."
+            gh release create $VERSION --notes "$NOTE"
+          fi
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+          NOTE: ${{ inputs.note }}
+          RELEASE_EXISTS: ${{ steps.check-release.outputs.release_exists }}

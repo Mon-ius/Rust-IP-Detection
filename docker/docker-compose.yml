@@ -1,0 +1,60 @@
+name: ${REPO}-service
+
+services:
+  ${REPO}:
+    image: ${GHCR}:latest
+    container_name: ${REPO}
+    restart: always
+    shm_size: 512mb
+    environment:
+      CLOUDFLARE: ${CLOUDFLARE}
+      SERVICE_PORT: ${SERVICE_PORT}
+    networks:
+      - ${REPO}_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SERVICE_PORT}/v1/ed25519.pub"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: ${GHCR}-nginx:latest
+    container_name: nginx
+    restart: always
+    shm_size: 512mb
+    environment:
+      CLOUDFLARE: ${CLOUDFLARE}
+      SERVICE_NAME: ${SERVICE_NAME}
+      SERVICE_HOST: ${REPO}
+      SERVICE_PORT: ${SERVICE_PORT}
+    ports:
+      - target: 443
+        published: 443
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: /etc/ssl/certs/${SERVICE_NAME}
+        target: /etc/nginx/ssl
+        read_only: false
+    depends_on:
+      ${REPO}:
+        condition: service_healthy
+    networks:
+      - ${REPO}_network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  ${REPO}_network:
+    driver: bridge
+    name: ${REPO}_network
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "fd01::/64"
