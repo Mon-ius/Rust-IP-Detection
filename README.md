@@ -10,6 +10,26 @@
 [![GitHub top language](https://img.shields.io/github/languages/top/Mon-ius/Rust-IP-Detection?logo=rust&label=)](./Cargo.toml#L4)
 [![Code Size](https://img.shields.io/github/languages/code-size/Mon-ius/Rust-IP-Detection)](https://github.com/Mon-ius/Rust-IP-Detection)
 
+### Install
+
+```sh
+sudo systemctl enable --now docker
+
+sudo usermod -aG docker ${USER}
+sudo chmod 666 /var/run/docker.sock
+sudo chown root:docker /var/run/docker.sock
+```
+
+### Run
+
+```sh
+export SERVICE_NAME='ip'
+export SERVICE_PORT=10086
+export CLOUDFLARE='ZXhhbXBsZV9jbG91ZGZsYXJlX2FjY291bnRfdG9rZW4='
+
+cat docker-compose.yml | docker compose -f - up -d
+```
+
 ### Source
 
 - [Rust-IP-Detection](https://github.com/Mon-ius/Rust-IP-Detection)
