@@ -28,7 +28,7 @@ export SERVICE_PORT=10086
 export CLOUDFLARE='ZXhhbXBsZV9jbG91ZGZsYXJlX2FjY291bnRfdG9rZW4='
 
 docker rm -f $(docker ps -a -q) && docker rmi -f $(docker images -a -q)
-echo y | docker network prune && cat cat docker-compose.yml | docker compose -f - up -d
+echo y | docker network prune && cat docker-compose.yml | docker compose -f - up -d
 ```
 
 ### Source
