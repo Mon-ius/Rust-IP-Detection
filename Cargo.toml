@@ -1,6 +1,6 @@
 [package]
 name = "rust-ip-detection"
-version = "0.0.4"
+version = "0.0.5"
 edition = "2024"
 
 [dependencies]
@@ -18,6 +18,13 @@ actix-web-static-files = "4.0"
 x25519-dalek = "3.0.0-pre.0"
 rand_core = "0.9.3"
 base64 = "0.22"
+
+[target.'cfg(all(target_env = "musl", target_pointer_width = "64", not(any(target_arch = "powerpc64"))))'.dependencies.jemallocator]
+version = "0.5"
+
+[target.'cfg(any(not(all(target_env = "musl")), any(target_arch = "powerpc64")))'.dependencies.mimalloc]
+version = "0.1"
+features = ["secure"]
 
 [[bin]]
 name = "rust-ip-detection"
