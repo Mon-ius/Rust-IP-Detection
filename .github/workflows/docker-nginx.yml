@@ -38,7 +38,10 @@ jobs:
       - name: Convert tags to lowercase
         run: |
           ghcr_tag="ghcr.io/${{ github.repository }}"
+          repository="${{ github.repository }}"
+          repo_name="${repository#*/}"
           echo "ghcr_tag=${ghcr_tag,,}" >> $GITHUB_ENV
+          echo "repo_name=${repo_name,,}" >> $GITHUB_ENV
       - uses: docker/build-push-action@v6
         with:
           context: "{{defaultContext}}:docker/nginx"

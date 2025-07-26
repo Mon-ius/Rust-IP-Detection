@@ -19,13 +19,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Convert tags to lowercase
+        run: |
+          ghcr_tag="ghcr.io/${{ github.repository }}"
+          repository="${{ github.repository }}"
+          repo_name="${repository#*/}"
+          echo "ghcr_tag=${ghcr_tag,,}" >> $GITHUB_ENV
+          echo "repo_name=${repo_name,,}" >> $GITHUB_ENV
+
       - name: Produce docker-compose.yml for deploy
         run: |
-          ghcr="ghcr.io/${{ github.repository }}"
-          echo "ghcr=${ghcr,,}" >> $GITHUB_ENV
-          repo=$(echo "${ghcr}" | cut -d'/' -f3)
-          sed -e "s|\${GHCR}|${ghcr}|g" \
-              -e "s|\${REPO}|${repo}|g" \
+          sed -e "s|\${GHCR}|${ghcr_tag}|g" \
+              -e "s|\${REPO}|${repo_name}|g" \
               "${{ inputs.path }}" > docker-compose.yml
 
       - name: Upload docker-compose.yml to release
