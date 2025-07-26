@@ -19,10 +19,6 @@ on:
   push:
     branches:
       - "master"
-    paths:
-      - ".github/workflows/docker.yml"
-      - "docker/entrypoint.sh"
-      - "docker/Dockerfile"
 
 jobs:
   build-docker:
