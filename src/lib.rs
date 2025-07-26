@@ -1,3 +1,5 @@
+mod utils;
+
 use actix_web::{web, App, HttpRequest, HttpServer, Responder};
 use serde::Serialize;
 
@@ -71,6 +73,18 @@ async fn get_ips(req: HttpRequest, config: web::Data<AppConfig>) -> impl Respond
     web::Json(ip_info)
 }
 
+async fn get_ed25519_pub() -> Result<impl Responder, actix_web::Error> {
+    let (_private_key, public_key) = utils::x25519_keypair()
+        .map_err(|_| actix_web::error::ErrorBadRequest("Failed to generate keypair"))?;
+
+    let response = serde_json::json!({
+        "key": public_key
+    });
+
+    Ok(web::Json(response))
+}
+
+
 async fn actix(
     port: u16,
     cloudflare: String,
@@ -84,6 +98,8 @@ async fn actix(
         App::new()
             .app_data(app_config.clone())
             .route("/", web::get().to(get_ips))
+            .route("/v1/ed25519.pub", web::get().to(get_ed25519_pub)
+        )
     })
     .bind(("0.0.0.0", port))?
     .run()
