@@ -1,12 +1,16 @@
 name: deploy
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  CARGO_TERM_COLOR: always
+
 on:
   workflow_call:
     inputs:
       path:
         required: true
         type: string
-      name:
+      version:
         required: true
         type: string
 
@@ -24,9 +28,10 @@ jobs:
               -e "s|\${REPO}|${repo}|g" \
               "${{ inputs.path }}" > docker-compose.yml
 
-      - name: Upload docker-compose.yml for deploy
-        uses: actions/upload-artifact@v4
+      - name: Upload docker-compose.yml to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: docker-compose
-          path: docker-compose.yml
-          retention-days: 30
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: docker-compose.yml
+          tag: refs/tags/${{ inputs.version }}
+          overwrite: true

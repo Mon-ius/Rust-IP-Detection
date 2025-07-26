@@ -27,10 +27,12 @@ jobs:
       version: ${{ needs.tag.outputs.version }}
       note: "add release for ${{ needs.tag.outputs.version }}"
   compose:
+    needs:
+      - tag
     uses: ./.github/workflows/deploy.yml
     with:
       path: docker/docker-compose.yml
-      name: ${{ github.repository }}
+      version: ${{ needs.tag.outputs.version }}
 
   matrix-release:
     uses: ./.github/workflows/build.yml
