@@ -13,11 +13,13 @@
 ### Install
 
 ```sh
-sudo systemctl enable --now docker
+# sudo systemctl enable --now docker
 
-sudo usermod -aG docker ${USER}
-sudo chmod 666 /var/run/docker.sock
-sudo chown root:docker /var/run/docker.sock
+# sudo usermod -aG docker ${USER}
+# sudo chmod 666 /var/run/docker.sock
+# sudo chown root:docker /var/run/docker.sock
+
+curl -fsSL bit.ly/create-docker | sh
 ```
 
 ### Run
